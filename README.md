@@ -18,6 +18,8 @@ api.getCities().then(function (cities) {
 });
 ```
 
+Note: `login` method will be called one time automatically before a request (if needed).
+
 ## Available methods
 
  * logout
