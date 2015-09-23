@@ -1,0 +1,33 @@
+{
+  "name": "pickpoint",
+  "version": "0.0.1",
+  "description": "Pickpoint API for NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 1 > /dev/null"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/izatop/pickpoint.git"
+  },
+  "keywords": [
+    "pickpoint",
+    "api"
+  ],
+  "author": "izatop@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/izatop/pickpoint/issues"
+  },
+  "homepage": "https://github.com/izatop/pickpoint#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.1",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-watch": "^4.3.5"
+  },
+  "dependencies": {
+    "debug": "^2.2.0",
+    "request": "^2.62.0"
+  }
+}
