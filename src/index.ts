@@ -268,4 +268,17 @@ export default class API {
     getReturnDocuments(parameters:DataType.Request.ReturnInvoices):Promise<DataType.Response.ReturnDocuments> {
         return this.client.post(DataType.Response.ReturnDocuments, 'getreturn', parameters);
     }
+
+    /**
+     * Команда предназначена для получения стоимости доставки. При расчете учитываются следующие ограничения:
+     *      габариты указываются общие на все места,
+     *      вес по умолчанию считается 1 кг,
+     *      рассчитывается только тариф за логистику.
+     *
+     * @param parameters
+     * @returns {Promise<T>}
+     */
+    calculate(parameters:DataType.Request.CalculateQuery):Promise<DataType.Response.Calculate> {
+        return this.client.post(DataType.Response.Calculate, 'calctariff', parameters);
+    }
 }

@@ -198,4 +198,17 @@ export module Request {
         DateFrom:string;
         DateEnd:string;
     }
+
+    export interface CalculateQuery extends Request {
+        IKN:string;
+        InvoiceNumber?:string;
+        FromCity:string;
+        FromRegion:string;
+        PTNumber:string;
+        EncloseCount?:number;
+        Length:number;
+        Depth:number;
+        Width:number;
+        Weight?:number;
+    }
 }

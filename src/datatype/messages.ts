@@ -238,4 +238,13 @@ export module Messages {
             Error:string;
         }
     }
+
+    export interface CalculateMessage extends Message {
+        SessionId: string;
+        Services: {
+            Name: string;
+            Tariff: number;
+            NDS: number;
+        }[];
+    }
 }

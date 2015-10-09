@@ -15,8 +15,4 @@ declare module "request" {
 
 declare module "debug" {
     export default function debug(namespace:string):(formatter:string, ...args:any[]) => void;
-
-    module debug {
-        export function Debugger(formatter:string, ...args:any[]);
-    }
 }

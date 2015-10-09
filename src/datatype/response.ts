@@ -55,4 +55,6 @@ export module Response {
     export class Zones extends Type<Messages.ZonesMessage> {}
 
     export class ReturnDocuments extends Type<Messages.ReturnDocumentsMessage> {}
+
+    export class Calculate extends Type<Messages.CalculateMessage> {}
 }
