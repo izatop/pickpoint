@@ -2,6 +2,7 @@
 
 import {Client} from './request';
 import * as DataType from './datatype';
+import rate from './rate';
 
 interface Credentials {
     login:string;
@@ -280,5 +281,18 @@ export default class API {
      */
     calculate(parameters:DataType.Request.CalculateQuery):Promise<DataType.Response.Calculate> {
         return this.client.post(DataType.Response.Calculate, 'calctariff', parameters);
+    }
+
+    /**
+     * @param zone
+     * @param factor
+     * @param width
+     * @param height
+     * @param length
+     * @param weight
+     * @param discount
+     */
+    getRate(zone:number, factor:number, width:number, height:number, length:number, weight:number, discount:boolean = false):number {
+        return rate.calculate(zone, factor, width, height, length, weight, discount);
     }
 }
