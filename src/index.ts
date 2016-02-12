@@ -225,10 +225,21 @@ export default class API {
      * идентификатор сессии и список номеров отправлений.
      *
      * @param parameters
-     * @returns {Promise<T>}
+     * @returns {Promise<DataType.Response.File>}
      */
     createLabels(parameters:DataType.Request.CretaeLabels):Promise<DataType.Response.File> {
         return this.client.post(DataType.Response.File, 'makelabel', parameters);
+    }
+
+    /**
+     * Команда предназначена для получения этикеток отправлений в формате pdf. На вход принимается структура, содержащая
+     * идентификатор сессии и список номеров отправлений.
+     *
+     * @param parameters
+     * @returns {Promise<DataType.Response.File>}
+     */
+    createZLabels(parameters:DataType.Request.CretaeLabels):Promise<DataType.Response.File> {
+        return this.client.post(DataType.Response.File, 'makeZLabel', parameters);
     }
 
     /**
