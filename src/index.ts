@@ -52,7 +52,7 @@ class Pickpoint {
     private login():Promise<string> {
         return new Promise((resolve, reject) => {
             if (this.session && this.session.expires.getTime() > Date.now()) {
-                resolve(this.session);
+                resolve(this.session.hash);
             } else {
                 this.client.call<{ErrorMessage?:string, SessionId?:string}>({
                     method: 'POST',
@@ -71,7 +71,7 @@ class Pickpoint {
                             expires: new Date(Date.now() + this.options.session.lifetime * 1000)
                         };
 
-                        resolve(this.session);
+                        resolve(this.session.hash);
                     } else {
                         reject(new Error("Unknown error"));
                     }

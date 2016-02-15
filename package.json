@@ -1,6 +1,6 @@
 {
   "name": "pickpoint",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pickpoint API for NodeJS",
   "main": "build/index.js",
   "scripts": {
