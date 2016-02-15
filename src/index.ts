@@ -9,13 +9,35 @@ interface Credentials {
     password:string;
 }
 
-export default class API {
+interface APIOptions {
+    test?:boolean;
+    session?: {
+        lifetime?:number;
+    },
+    timeout?:number;
+}
+
+interface APISession {
+    hash:string;
+    expires:Date;
+}
+
+class Pickpoint {
     client:Client;
     credentials:Credentials;
-    session:string;
+    session:APISession;
+    options:APIOptions;
 
-    constructor(login:string, password:string, options:any = {}) {
-        this.client = new Client();
+    constructor(login:string, password:string, options:APIOptions = {}) {
+        this.options = options || {};
+
+        if (false === this.options.hasOwnProperty('session')) {
+            this.options.session = {
+                lifetime: 3600
+            };
+        }
+
+        this.client = new Client({test: options.test || false, timeout: options.timeout});
         this.credentials = {login, password};
         this.client.setSessionHandler(() => { return this.login() });
     }
@@ -29,7 +51,7 @@ export default class API {
      */
     private login():Promise<string> {
         return new Promise((resolve, reject) => {
-            if (this.session) {
+            if (this.session && this.session.expires.getTime() > Date.now()) {
                 resolve(this.session);
             } else {
                 this.client.call<{ErrorMessage?:string, SessionId?:string}>({
@@ -44,8 +66,12 @@ export default class API {
                     if (result.ErrorMessage) {
                         reject(new Error(result.ErrorMessage));
                     } else if (result.SessionId) {
-                        this.session = result.SessionId;
-                        resolve(result.SessionId);
+                        this.session = {
+                            hash: result.SessionId,
+                            expires: new Date(Date.now() + this.options.session.lifetime * 1000)
+                        };
+
+                        resolve(this.session);
                     } else {
                         reject(new Error("Unknown error"));
                     }
@@ -307,3 +333,7 @@ export default class API {
         return rate.calculate(zone, factor, width, height, length, weight, discount);
     }
 }
+
+export default function (login:string, password:string, options:APIOptions = {}) {
+    return new Pickpoint(login, password, options);
+};

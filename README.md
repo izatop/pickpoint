@@ -1,24 +1,35 @@
 # pickpoint
 
-This is a pickpoint.ru API for NodeJS.
+This is a client library for Pickpoint API.
 
-## Install & Use
+## Install
 
 ```
 npm install pickpoint --save
 ```
 
-Usage:
+## Usage:
+
+Simple example
 
 ```js
-var Pickpoint = require('./build/index.js');
-var api = new Pickpoint('apitest', 'apitest', {test: true});
-api.getCities().then(function (cities) {
-    console.log(cities);
-});
-```
+const Pickpoint = require('pickpoint');
+const api = new Pickpoint(
+    'apitest', // login
+    'apitest', // password
+    {
+        test: true, // it will set API url to http://e-solution.pickpoint.ru/apitest/
+        session: {
+            lifetime: 3600 // how often call login
+        },
+        timeout: 60 // API timeout
+    }
+);
 
-Note: `login` method will be called one time automatically before a request (if needed).
+api.getCities()
+    .then(console.log)
+    .catch(console.error);
+```
 
 ## Available methods
 
@@ -37,9 +48,10 @@ Note: `login` method will be called one time automatically before a request (if 
  * getRegistry
  * getRegistryByParcelNumber
  * createLabels
+ * createZLabels
  * getCities
  * getPostamatList
  * getZones
  * getReturnDocuments
- 
-Full implementation of Pickpoint API coming soon...
+
+Full description of API parameters you can see in Pickpoint integration docs.

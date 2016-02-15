@@ -17,6 +17,11 @@ interface RequestParameters {
     session?:string;
 }
 
+interface ClientOptions {
+    test:boolean;
+    timeout:number;
+}
+
 export class Client {
     client:any;
     url:string;
@@ -30,7 +35,9 @@ export class Client {
     /**
      * @param options
      */
-    constructor(options:{test:boolean} = {test:false}) {
+    constructor(options:ClientOptions) {
+        options = options || {test: false, timeout: 60};
+
         this.url = "http://e-solution.pickpoint.ru/api/";
         if (options.test) {
             this.url = "http://e-solution.pickpoint.ru/apitest/";
@@ -38,7 +45,7 @@ export class Client {
 
         this.client = request.defaults({
             baseUrl: this.url,
-            timeout: 60000 // default pickpoint timeout is 60s
+            timeout: (options.timeout || 60) * 1000 // default pickpoint timeout is 60s
         });
 
         this.log = debug('pickpoint:request');
