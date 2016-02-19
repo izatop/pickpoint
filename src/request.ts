@@ -15,6 +15,7 @@ interface RequestParameters {
     url:string;
     data?:RequestData;
     session?:string;
+    encoding?:string;
 }
 
 interface ClientOptions {
@@ -63,15 +64,16 @@ export class Client {
      * @param result
      * @returns {{}}
      */
-    private static apply<T>(datatype:new (data:any) => T, result:any):T {
+    private static apply<T>(datatype:DataType.Response.TypeInterface<T>, result:any):T {
         return new datatype(result);
     }
 
     /**
      * @param options
+     * @param datatype
      * @returns {Promise<T>}
      */
-    call<T>(options:RequestParameters):Promise<T> {
+    call<T>(options:RequestParameters, datatype?:DataType.Response.TypeInterface<T>):Promise<T> {
         return new Promise((resolve, reject) => {
             if (!options.data) {
                 options.data = {};
@@ -81,19 +83,28 @@ export class Client {
                 options.data['SessionId'] = options.session;
             }
 
-            let req = {
+            let req:any = {
                 method: options.method || "GET",
-                url: '/' + options.url.replace('^/', ''),
+                url: options.url.replace('^/', ''),
                 body: options.data,
                 json: true,
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Content-Encoding": "UTF-8"
                 }
             };
 
-            this.log("request: %s %s: %j", req.method, req.url, req.body);
+            /**
+             * If we awaiting response as Response.File (like a PDF) we must set
+             * encoding to null and will give a requested file as a Buffer.
+             */
+            if (<any> datatype === DataType.Response.File) {
+                req.encoding = null;
+            }
+
+            this.log("request: encoding %s, method %s url %s: %j", req.encoding, req.method, this.url + req.url, req.body);
             this.client(req, (error, response, body) => {
-                this.log("response: %s %s [%s]: error %s", req.method, req.url, typeof body, error);
+                this.log("response: %s %s [%s]: error %s", req.method, this.url + req.url, typeof body, error);
 
                 if (error) {
                     return reject(error);
@@ -110,17 +121,18 @@ export class Client {
 
     /**
      * @param options
+     * @param datatype
      * @returns {Promise<T>}
      */
-    private wrap<T>(options:RequestParameters):Promise<T> {
+    private wrap<T>(options:RequestParameters, datatype:DataType.Response.TypeInterface<T>):Promise<T> {
         if (typeof this.auth == "function") {
             return this.auth().then((session) => {
                 options['session'] = session;
-                return this.call(options);
+                return this.call(options, datatype);
             });
         }
 
-        return this.call(options);
+        return this.call(options, datatype);
     }
 
     /**
@@ -131,8 +143,8 @@ export class Client {
      * @param data
      * @returns {Promise<T>}
      */
-    post<T>(datatype:new (data:any) => T, url:string, data:any = {}):Promise<T> {
-        return this.wrap({method: 'POST', url, data})
+    post<T>(datatype:DataType.Response.TypeInterface<T>, url:string, data:any = {}):Promise<T> {
+        return this.wrap({method: 'POST', url, data}, datatype)
             .then(result => {
                 return Client.apply(datatype, result);
             });
@@ -145,8 +157,8 @@ export class Client {
      * @param url
      * @returns {Promise<T>}
      */
-    get<T>(datatype:new (data:any) => T, url:string):Promise<T> {
-        return this.call({method: 'GET', url})
+    get<T>(datatype:DataType.Response.TypeInterface<T>, url:string):Promise<T> {
+        return this.call({method: 'GET', url}, datatype)
             .then(result => {
                 return Client.apply(datatype, result);
             });

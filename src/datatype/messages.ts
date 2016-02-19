@@ -149,7 +149,11 @@ export module Messages {
     }
 
     export interface FileMessage extends Message {
-        file:Buffer;
+        buffer:Buffer;
+    }
+
+    export interface FileMessage extends Message {
+        error:string;
     }
 
     export interface RegistryMessage extends Message {

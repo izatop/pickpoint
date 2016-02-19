@@ -1,17 +1,21 @@
 import {Messages} from './messages';
 
 export module Response {
+    export interface TypeInterface<T> {
+        new(message):T;
+    }
+
     export class Type<M extends Messages.Message> {
-        message:M;
-        constructor(message:M) {
-            if (message.ErrorMessage) {
+        message:M|any;
+        constructor(message:M|any) {
+            if (typeof message == "object" && message.ErrorMessage) {
                 throw new Error(message.ErrorMessage);
             }
 
             this.apply(message);
         }
 
-        apply(message:M):void {
+        apply(message:M|any):void {
             this.message = message;
         }
     }
@@ -42,7 +46,20 @@ export module Response {
 
     export class CancelledCourier extends Type<Messages.CancelledCourierMessage> {}
 
-    export class File extends Type<Messages.FileMessage> {}
+    export class File extends Type<Messages.FileMessage> {
+        apply(message:Buffer) {
+            if (message instanceof Buffer
+                && message.length < 1024
+                && message.toString('utf-8').substr(0, 5) == 'Error'
+            ) {
+                this.message = {error: message.toString('utf-8')};
+            } else if (message instanceof Buffer) {
+                this.message = {buffer: message};
+            } else {
+                this.message = {error: 'I don\'t known what the happening: ' + message};
+            }
+        }
+    }
 
     export class Registry extends Type<Messages.RegistryMessage> {}
 
