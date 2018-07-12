@@ -39,9 +39,9 @@ export class Client {
     constructor(options:ClientOptions) {
         options = options || {test: false, timeout: 60};
 
-        this.url = "http://e-solution.pickpoint.ru/api/";
+        this.url = "https://e-solution.pickpoint.ru/api/";
         if (options.test) {
-            this.url = "http://e-solution.pickpoint.ru/apitest/";
+            this.url = "https://e-solution.pickpoint.ru/apitest/";
         }
 
         this.client = request.defaults({
